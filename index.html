@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>F1 Start Lights</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background-color: #000000;
+            height: 100vh;
+            box-sizing: border-box;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            cursor: pointer;
+            user-select: none;
+            overflow: hidden;
+        }
+
+        .lights-container {
+            display: flex;
+            gap: min(6vw, 50px);
+            align-items: center;
+            width: 100%;
+            max-width: 700px;
+            min-width: 280px;
+            justify-content: center;
+        }
+
+        .light {
+            width: min(12vw, 80px);
+            height: min(12vw, 80px);
+            min-width: 30px;
+            min-height: 30px;
+            border-radius: 50%;
+            background-color: #333;
+            border: 2px solid #666;
+            transition: background-color 0.1s ease;
+            flex-shrink: 0;
+        }
+
+        .light.on {
+            background-color: #ff0000;
+            box-shadow: 0 0 min(4vw, 25px) #ff0000;
+        }
+    </style>
+</head>
+<body>
+    <div class="lights-container">
+        <div class="light" id="light1"></div>
+        <div class="light" id="light2"></div>
+        <div class="light" id="light3"></div>
+        <div class="light" id="light4"></div>
+        <div class="light" id="light5"></div>
+    </div>
+
+    <script>
+        let currentState = 'waiting'; // 'waiting', 'sequence', 'completed'
+        let currentTimeout;
+        let currentLight = 0;
+        
+        const lights = [
+            document.getElementById('light1'),
+            document.getElementById('light2'),
+            document.getElementById('light3'),
+            document.getElementById('light4'),
+            document.getElementById('light5')
+        ];
+
+        function resetLights() {
+            lights.forEach(light => light.classList.remove('on'));
+            if (currentTimeout) {
+                clearTimeout(currentTimeout);
+            }
+            currentLight = 0;
+            currentState = 'waiting';
+        }
+
+        function startSequence() {
+            currentState = 'sequence';
+            currentLight = 0;
+            lightUpNext();
+        }
+
+        function lightUpNext() {
+            if (currentLight < 5) {
+                lights[currentLight].classList.add('on');
+                currentLight++;
+                currentTimeout = setTimeout(lightUpNext, 1000);
+            } else {
+                // All lights are on, wait random time then turn off
+                const randomDelay = Math.random() * 2000 + 1000; // 1-3 seconds in milliseconds
+                currentTimeout = setTimeout(() => {
+                    lights.forEach(light => light.classList.remove('on'));
+                    currentState = 'completed';
+                }, randomDelay);
+            }
+        }
+
+        function handleInput(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            if (currentState === 'waiting' || currentState === 'completed') {
+                startSequence();
+            } else if (currentState === 'sequence') {
+                resetLights();
+            }
+        }
+
+        document.body.addEventListener('click', handleInput);
+        document.body.addEventListener('touchstart', handleInput);
+        document.body.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+        });
+    </script>
+</body>
+</html>
