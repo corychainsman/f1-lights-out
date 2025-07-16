@@ -64,11 +64,38 @@
             justify-content: center;
             font-family: 'Formula1', Arial, sans-serif;
             letter-spacing: 0.05em;
+            white-space: nowrap;
+        }
+        .click::after, .tap::after {
+            content: " ";
+            display: inline;
+        }
+        .instructions .click {
+            display: inline;
+        }
+        .instructions .tap {
+            display: none;
+        }
+        @media (pointer: coarse) {
+            .instructions .click {
+                display: none;
+            }
+            .instructions .tap {
+                display: inline;
+            }
+        }
+        @media (pointer: fine) {
+            .instructions .click {
+                display: inline;
+            }
+            .instructions .tap {
+                display: none;
+            }
         }
     </style>
 </head>
 <body>
-    <p class="instructions">Click  anywhere to start/reset</p>
+    <p class="instructions"><span class="click">Click anywhere</span><span class="tap">Tap anywhere</span></p>
     <div class="lights-container">
         <div class="light" id="light1"></div>
         <div class="light" id="light2"></div>
